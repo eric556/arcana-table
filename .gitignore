@@ -50,3 +50,6 @@ next-env.d.ts
 
 # Generated TypeScript incremental-build cache.
 *.tsbuildinfo
+
+# Static GitHub Pages build.
+/dist-pages/

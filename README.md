@@ -103,3 +103,11 @@ Tapped-card labels: counters, token quantities and combat badges live in an over
 - `build/`, `scripts/`, `.openai/hosting.json`, and the Vite/Vinext configuration: the current build and hosting integration. These remain necessary until a separate static deployment is configured.
 
 There is no application database or account-login requirement in the game code. Generic database examples and unused starter UI components have been removed.
+
+## GitHub Pages
+
+The `Deploy Arcana to GitHub Pages` workflow builds and deploys `main` automatically; it can also run manually from Actions. In repository **Settings → Pages**, set **Source** to **GitHub Actions** once. No ChatGPT account or application server is required for this build. The host still keeps the room open in their browser, and PeerJS signaling/TURN behavior is unchanged.
+
+The workflow derives the asset base path from Pages settings, so repository URLs and custom domains both work. Room invitations retain that path and use a URL fragment. Card artwork stays in each browser’s cache and is not included in deployments.
+
+For a local static build, run `pnpm run build:pages`, then `pnpm run preview:pages`. To check the repository URL path locally, run `PAGES_BASE_PATH=/arcana-table/ pnpm run build:pages` and `PAGES_BASE_PATH=/arcana-table/ pnpm run preview:pages`. The output is `dist-pages/`. The existing `build` command remains the separate Sites/Vinext build.
