@@ -1,0 +1,24 @@
+'use client';
+import {useEffect,useRef,useState} from 'react';
+import {Hexagon,ChevronDown,ChevronRight,Users,Copy,Plus,LogOut,RotateCcw,Settings2,HelpCircle,BookOpen,PanelLeftOpen,Check,Sun,Moon,Swords} from 'lucide-react';
+import {DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem,DropdownMenuLabel,DropdownMenuSeparator} from './ui/dropdown-menu';
+import {PHASES,type Table} from '@/lib/game';
+type Props={table:Table;playerId:string;mode:'new'|'host'|'guest';status:string;code:string;busy:boolean;copied:boolean;showLog:boolean;onLog:()=>void;onInspector:()=>void;onInvite:()=>void;onReconnect:()=>void;onOpen:(view:'host'|'join'|'leave'|'help'|'settings')=>void;onTurn:(phase?:number)=>void};
+export function TableToolbar(p:Props){
+ const [menu,setMenu]=useState(false),skipFocus=useRef(false);
+ const run=(fn:()=>void)=>{skipFocus.current=true;setMenu(false);fn();};
+ const phaseRow=useRef<HTMLElement>(null);
+ useEffect(()=>{const row=phaseRow.current,active=row?.querySelector<HTMLElement>('[aria-current=step]');if(row&&active){const left=active.offsetLeft;if(left<row.scrollLeft)row.scrollLeft=left;else if(left+active.offsetWidth>row.scrollLeft+row.clientWidth)row.scrollLeft=left+active.offsetWidth-row.clientWidth;}},[p.table.phase]);
+ const turn=p.table.players.find(x=>x.id===p.table.turn),canTurn=p.mode!=='guest'||p.table.turn===p.playerId;
+ return <header className="compact-table-toolbar">
+  <DropdownMenu open={menu} onOpenChange={setMenu} modal={false}><DropdownMenuTrigger asChild><button className="table-menu-trigger" aria-label="Table menu" title="Table menu"><Hexagon/><span className="compact-room-name">{p.mode==='new'?'New room':`${p.table.players[0]?.name}'s table`}</span><span className="compact-player-count"><Users/>{p.table.players.length}/4</span><ChevronDown/></button></DropdownMenuTrigger><DropdownMenuContent className="library-context-menu room-menu" align="start" collisionPadding={8} onCloseAutoFocus={e=>{if(skipFocus.current){e.preventDefault();skipFocus.current=false;}}}>
+   <DropdownMenuLabel>{p.mode==='new'?'Arcana · New room':`${p.table.players[0]?.name}'s table`}<small>{p.table.format==='commander'?'Commander':'60-card'} · {p.status}</small>{p.code&&<small>Room {p.code}</small>}</DropdownMenuLabel>
+   {p.mode==='new'?<><DropdownMenuItem onSelect={()=>run(()=>p.onOpen('host'))}><Plus/>Host table</DropdownMenuItem><DropdownMenuItem onSelect={()=>run(()=>p.onOpen('join'))}><Users/>Join table</DropdownMenuItem></>:<DropdownMenuItem onSelect={()=>run(p.onInvite)}><Copy/>Copy invite</DropdownMenuItem>}
+   <DropdownMenuSeparator/>{p.table.players.map(x=><DropdownMenuLabel key={x.id}><span className={x.connected?'status-dot':'status-dot new-room-dot'}/>{x.name}{x.id===p.playerId?' (you)':''}{!x.connected?' · offline':''}</DropdownMenuLabel>)}<DropdownMenuSeparator/>
+   <DropdownMenuItem onSelect={()=>run(p.onInspector)}><PanelLeftOpen/>Card inspector</DropdownMenuItem><DropdownMenuItem onSelect={()=>run(p.onLog)}><BookOpen/>Activity ({p.table.log.length})</DropdownMenuItem><DropdownMenuItem onSelect={()=>run(()=>p.onOpen('help'))}><HelpCircle/>How to play & shortcuts<kbd>?</kbd></DropdownMenuItem><DropdownMenuItem onSelect={()=>run(()=>p.onOpen('settings'))}><Settings2/>Connection settings</DropdownMenuItem>
+   {p.mode==='guest'&&<DropdownMenuItem disabled={p.busy} onSelect={()=>run(p.onReconnect)}><RotateCcw/>Reconnect</DropdownMenuItem>}<DropdownMenuSeparator/><DropdownMenuItem onSelect={()=>run(()=>p.onOpen('leave'))}><LogOut/>{p.mode==='new'?'Reset game':'Leave room & start fresh'}</DropdownMenuItem>
+  </DropdownMenuContent></DropdownMenu>
+  <div className="compact-turn"><span className="compact-turn-caption" title={`Turn ${p.table.turnNumber} · ${turn?.name}`}><small>TURN {p.table.turnNumber}</small><strong>{p.table.turn===p.playerId?'Your turn':turn?.name}</strong></span><nav className="toolbar-phases" aria-label="Turn phases" ref={phaseRow}>{PHASES.map((phase,i)=><button key={phase} className={p.table.phase===i?'current-phase':''} aria-current={p.table.phase===i?'step':undefined} disabled={!canTurn} title={phase} onClick={()=>p.onTurn(i)}><span aria-hidden="true">{i===0?<Sun/>:i===2?<Swords/>:i===4?<Moon/>:<Hexagon/>}</span>{phase}</button>)}</nav><button className="btn next-turn compact-pass" disabled={!canTurn} title="Pass turn" aria-label="Pass turn" onClick={()=>p.onTurn()}><span>Pass turn</span><ChevronRight/></button></div>
+  <div className="compact-room-actions"><button className="icon-btn compact-activity" aria-label="Activity" aria-pressed={p.showLog} title="Activity" onClick={p.onLog}><BookOpen/></button><button className="btn gold compact-invite" aria-label={p.mode==='new'?'Host table':'Invite friends'} onClick={()=>p.mode==='new'?p.onOpen('host'):p.onInvite()}>{p.mode==='new'?<Plus/>:p.copied?<Check/>:<Copy/>}<span>{p.mode==='new'?'Host':p.copied?'Copied':'Invite'}</span></button></div>
+ </header>;
+}

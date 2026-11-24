@@ -36,7 +36,7 @@ The app's hosting access policy is independent of room codes: a friend must be a
 
 Deck resolution batches up to 75 identifiers per collection request, waits at least 650 ms between request starts, deduplicates names, and caches card records locally. A Web Lock coordinates lookup traffic across same-origin tabs where available. A 429 stops the import and applies at least a 60-second cooldown, honoring longer numeric Retry-After values. There are no automatic rate-limit retries. Browser fetch supplies the browser's User-Agent and the client sends Accept headers.
 
-Art downloads use a separate serialized queue with a 120 ms pause. Cache Storage holds downloaded art and metadata on that device; already cached art is not fetched again. Twenty-eight starter card images are bundled with the app and use normal static-file caching. Browsers can evict local storage; persistence is best effort. Cards and artwork are supplied by Scryfall; Magic and artwork belong to Wizards of the Coast and the respective artists. See https://scryfall.com/docs/api/rate-limits and https://scryfall.com/docs/api/cards/collection.
+Art downloads use a separate serialized queue with a 120 ms pause. Cache Storage holds downloaded art and metadata on that device; already cached art is not fetched again. Card artwork is fetched from Scryfall on demand and is not bundled in this repository. Mana and action symbol assets are included. Browsers can evict local storage; persistence is best effort. Cards and artwork are supplied by Scryfall; Magic and artwork belong to Wizards of the Coast and the respective artists. See https://scryfall.com/docs/api/rate-limits and https://scryfall.com/docs/api/cards/collection.
 
 ## Development and verification
 

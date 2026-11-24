@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import ts from 'typescript';
+const js=ts.transpileModule(await readFile(new URL('../lib/library-search.ts',import.meta.url),'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
+const {librarySearchCards}=await import(`data:text/javascript;base64,${Buffer.from(js).toString('base64')}`);
+const cards=[{uid:'z',data:{name:'Swamp'}},{uid:'b',data:{name:'Forest'}},{uid:'a',data:{name:'Forest'}},{uid:'x',data:{name:'Arcane Signet'}}];
+const before=structuredClone(cards),sorted=librarySearchCards(cards);
+assert.deepEqual(sorted.map(c=>c.data.name),['Arcane Signet','Forest','Forest','Swamp']);
+assert.deepEqual(cards,before,'search must not change library order or card state');
+assert.equal(cards[0].uid,'z','next draw is unchanged');
+assert.deepEqual(librarySearchCards([...cards].reverse()),sorted,'duplicate names cannot reveal their relative deck positions');
+console.log('PASS alphabetical library search preserves actual order, next draw and duplicate-card ordering');

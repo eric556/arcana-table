@@ -1,0 +1,68 @@
+import {codec} from './peer-transport.mjs';
+import {mock} from 'node:test';
+import assert from 'node:assert/strict';import {readFile,writeFile,mkdtemp,rm} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';import {pathToFileURL} from 'node:url';import {EventEmitter} from 'node:events';import ts from 'typescript';
+const dir=await mkdtemp(join(tmpdir(),'arcana-recovery-'));
+try{
+ const names=['game','stack','network','authority','room-session','shared-cards'];for(const name of names){let js=ts.transpileModule(await readFile(new URL(`../lib/${name}.ts`,import.meta.url),'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;for(const dep of names)js=js.replaceAll(`'./${dep}'`,`'./${dep}.mjs'`);await writeFile(join(dir,`${name}.mjs`),js);}
+ const g=await import(pathToFileURL(join(dir,'game.mjs'))),{RoomNetwork,ROOM_PROTOCOL,COMMAND_ACK_TIMEOUT_MS,readHost,HOST_KEY}=await import(pathToFileURL(join(dir,'network.mjs')));
+ const storage=()=>{const map=new Map();return {fail:false,getItem:k=>map.get(k)??null,setItem(k,v){if(this.fail)throw new Error('Storage full');map.set(k,v);},removeItem:k=>map.delete(k)};};
+ const flush=()=>new Promise(r=>setImmediate(r));
+ const player=name=>{const p=g.emptyPlayer(name,'commander');p.zones.hand=[g.card({id:g.uid(),name:`${name} secret spell`,type:'Instant'})];p.zones.library=Array.from({length:6},(_,i)=>g.card({id:g.uid(),name:`${name} secret library ${i}`,type:'Creature'}));p.zones.battlefield=[g.card({id:g.uid(),name:`${name} creature`,type:'Creature'})];return p;};
+ class Wire extends EventEmitter{
+  open=true;sent=[];drop=()=>false;frames=[];
+  constructor(serialization='binary'){super();this.codec=codec(serialization);this.codec.on('error',e=>this.emit('error',e));this.codec.on('data',raw=>this.emit('data',raw));this.codec.dataChannel.send=bytes=>{this.frames.push(bytes.byteLength);assert.ok(bytes.byteLength<=16384,'RTC frame too large');queueMicrotask(()=>{if(this.other.open)this.other.codec._handleDataMessage({data:bytes});});};}
+  send(raw){const m=JSON.parse(raw);this.sent.push(m);if(!this.drop(m))this.codec.send(raw);}
+  close(){if(!this.open)return;this.open=false;this.emit('close');if(this.other.open){this.other.open=false;this.other.emit('close');}}
+ }
+
+ let hostPeer,host,hp=player('Host');const hostStore=storage(),hostFrames=[],hostErrors=[];let count=0;const test=async(name,f)=>{await f();count++;console.log('PASS '+name);};
+ const startHost=async(resume)=>{hostPeer=new EventEmitter();hostPeer.destroy=()=>{};host=new RoomNetwork(t=>hostFrames.push(t),()=>{},()=>{},e=>hostErrors.push(e),p=>hp=p,hostStore);host.makePeer=async()=>hostPeer;await host.host(hp,'commander',{},resume);};await startHost();const code=host.code;
+ const guest=async(name,store=storage(),token=`seat-${g.uid()}`,initial=player(name),reclaim=false)=>{
+  const x={p:initial,store,token,frames:[],errors:[],statuses:[]};x.api=new RoomNetwork(t=>x.frames.push(t),s=>x.statuses.push(s),()=>{},e=>x.errors.push(e),p=>x.p=p,undefined,store);
+  x.api.makePeer=async()=>({destroy:()=>{},connect:(_id,options)=>{assert.equal(options.serialization,'binary');const c=new Wire(options.serialization),s=new Wire(options.serialization);c.other=s;s.other=c;x.client=c;x.server=s;queueMicrotask(()=>{hostPeer.emit('connection',s);c.emit('open');});return c;}});
+  await x.api.join(code,initial,token,{},reclaim);await flush();return x;
+ };
+ let b=await guest('Bob'),c=await guest('Cara'),d=await guest('Dan');
+ await test('four seats share the same public table, with private hands delivered only to their seat',async()=>{assert.equal(host.table.players.length,4);for(const x of [b,c,d]){assert.deepEqual(x.frames.at(-1),JSON.parse(JSON.stringify(host.table)));const wire=JSON.stringify(x.server.sent.filter(m=>m.type==='snapshot').at(-1));for(const other of [hp,b.p,c.p,d.p].filter(p=>p.id!==x.p.id))assert.ok(!wire.includes(`${other.name} secret`));}});
+ await test('client state uploads and forged actors cannot replace a seat',async()=>{b.client.send(JSON.stringify({type:'state',player:{...b.p,life:1},sequence:999}));await flush();assert.equal(host.table.players.find(p=>p.id===b.p.id).life,40);await b.api.submit({kind:'action',action:{type:'life',amount:-2},actor:c.p.id});assert.equal(b.p.life,38);assert.equal(c.p.life,40);});
+ await test('lost acknowledgement replays a draw exactly once after guest refresh',async()=>{b.server.drop=m=>m.type==='snapshot';const before=b.p.zones.hand.length;const pending=b.api.submit({kind:'action',action:{type:'draw'}}).catch(()=>{});await flush();const stale=structuredClone(b.p),store=b.store,token=b.token;assert.equal(host.table.players.find(p=>p.id===stale.id).counts.hand,before+1);b.api.close();await pending;b=await guest('Bob',store,token,stale,true);assert.equal(b.p.zones.hand.length,before+1);const journal=JSON.parse(store.getItem(`arcana-outbox-v9-${code}-${token}`));assert.equal(journal.outbox.length,0);});
+ await test('token stack split survives a lost acknowledgement and reconnect exactly once',async()=>{
+  await b.api.submit({kind:'action',action:{type:'token',name:'Goblin',stats:'1/1',count:40}});const id=b.p.zones.battlefield.at(-1).uid;
+  b.server.drop=m=>m.type==='snapshot';const pending=b.api.submit({kind:'action',action:{type:'tokenSplit',uid:id,count:7}}).catch(()=>{});await flush();
+  const stale=structuredClone(b.p),{store,token}=b;b.api.close();await pending;b=await guest('Bob',store,token,stale,true);
+  const tokens=b.p.zones.battlefield.filter(c=>c.token);assert.deepEqual(tokens.map(g.tokenCount),[33,7]);
+  for(const seat of [host.table,c.frames.at(-1),d.frames.at(-1)])assert.deepEqual(seat.players.find(p=>p.id===b.p.id).zones.battlefield.filter(c=>c.token).map(g.tokenCount),[33,7]);
+ });
+ await test('an unsent command survives refresh and is applied after reconnect',async()=>{b.client.drop=m=>m.type==='command';const before=b.p.zones.hand.length;const pending=b.api.submit({kind:'action',action:{type:'draw'}}).catch(()=>{});await flush();const {store,token}=b,stale=structuredClone(b.p);b.api.close();await pending;b=await guest('Bob',store,token,stale,true);await flush();assert.equal(b.p.zones.hand.length,before+1);assert.equal(host.table.players.find(p=>p.id===b.p.id).counts.hand,before+1);});
+ await test('resync replaces corrupt local private state with the host snapshot',async()=>{const expected=structuredClone(b.p);b.p.zones.hand=[];b.p.life=1;b.api.requestSync(b.p);await flush();assert.deepEqual(b.p,expected);});
+ await test('resolution finishes with owner disconnected and repairs a stale stack on rejoin',async()=>{const card=b.p.zones.hand[0];await b.api.submit({kind:'action',action:{type:'move',uid:card.uid,to:'stack'}});const stale=structuredClone(b.p),{store,token}=b;b.api.close();await flush();const top=host.table.stack.entries[0];await host.submit({kind:'stack',command:{type:'finish',entryId:top.id,revision:host.table.stack.revision,to:'graveyard',outcome:'resolve'}});assert.equal(host.table.stack.entries.length,0);b=await guest('Bob',store,token,stale,true);assert.equal(b.p.zones.stack.length,0);assert.equal(b.p.zones.graveyard.filter(c=>c.uid===card.uid).length,1);});
+ await test('host storage failure rejects publication and a saved guest command can be retried',async()=>{const before=b.p.life,revision=readHost(hostStore).room.revision;hostStore.fail=true;const pending=b.api.submit({kind:'action',action:{type:'life',amount:-3}}).catch(e=>e);await flush();assert.equal(b.p.life,before);assert.equal(host.table.players.find(p=>p.id===b.p.id).life,before);assert.equal(readHost(hostStore).room.revision,revision);assert.match(b.errors.at(-1),/could not save/);assert.match((await pending).message,/could not save/);hostStore.fail=false;b.api.requestSync();await flush();assert.equal(b.p.life,before-3);});
+ await test('rapid combat commands accumulate and all seats see the result',async()=>{await host.submit({kind:'turn',phase:2});await host.submit({kind:'combat',command:{type:'attack',cardId:hp.zones.battlefield[0].uid,targetId:b.p.id,combatId:host.table.combat.id}});await host.submit({kind:'combat',command:{type:'finishAttackers',combatId:host.table.combat.id}});await b.api.submit({kind:'combat',command:{type:'block',cardId:b.p.zones.battlefield[0].uid,attackerCardId:hp.zones.battlefield[0].uid,combatId:host.table.combat.id}});await flush();assert.equal(host.table.combat.blocks.length,1);for(const x of [b,c,d])assert.deepEqual(x.frames.at(-1).combat,host.table.combat);});
+ await test('reclaiming a seat invalidates all writes from its old connection',async()=>{const old=b,oldServer=b.server;b=await guest('Bob',b.store,b.token,b.p,true);await flush();assert.equal(host.table.players.length,4);assert.equal(old.api.closed,true);const life=b.p.life;oldServer.emit('data',JSON.stringify({type:'command',envelope:{id:g.uid(),sequence:999,command:{kind:'action',action:{type:'life',amount:-20}}}}));await flush();assert.equal(b.p.life,life);});
+ await test('host refresh resumes the same room and restores all seat identities and card order',async()=>{const expected=[b,c,d].map(x=>structuredClone(x.p)),checkpoint=readHost(hostStore),epoch=checkpoint.room.epoch;host.close();await flush();assert.equal(b.statuses.at(-1),'Host disconnected');await startHost(checkpoint);assert.equal(host.code,code);assert.equal(readHost(hostStore).room.epoch,epoch);for(const [i,x] of [b,c,d].entries()){x.api.close();const fresh=await guest(x.p.name,x.store,x.token,g.emptyPlayer('stale','commander'),true);assert.deepEqual(fresh.p,expected[i]);if(i===0)b=fresh;if(i===1)c=fresh;if(i===2)d=fresh;}assert.equal(host.table.players.length,4);});
+ await test('old protocols are rejected without reserving a seat',async()=>{const old=new Wire(),other=new Wire();old.other=other;other.other=old;hostPeer.emit('connection',old);old.emit('data',JSON.stringify({type:'hello',protocol:ROOM_PROTOCOL-1,token:g.uid(),player:player('Old')}));assert.equal(old.sent[0].code,'ROOM_VERSION_MISMATCH');assert.equal(old.sent[0].hostProtocol,9);assert.equal(host.seats.size,3);old.close();});
+ await test('full Commander deck import and snapshots use real chunked PeerJS serialization',async()=>{
+  const deck=player('Large deck');deck.deckName='Commander transport test';for(const z of g.ZONES)deck.zones[z]=[];
+  deck.zones.library=Array.from({length:100},(_,i)=>g.card({id:`large-${i}`,name:`Spell ${i}`,type:'Creature',text:'Whenever this creature attacks, draw a card. 魔法 — '.repeat(15),image:`https://cards.scryfall.io/normal/front/a/b/${i}.jpg`}));
+  const payload=JSON.stringify({kind:'deck',player:deck});assert.ok(Buffer.byteLength(payload)>100000);
+  const legacy=codec('json'),errors=[];legacy.on('error',e=>errors.push(e));legacy.send(payload);assert.match(errors[0].message,/too big/i);
+  const before=b.client.frames.length;await b.api.submit({kind:'deck',player:deck});await flush();assert.equal(b.p.zones.library.length,100);assert.equal(b.p.deckName,deck.deckName);assert.ok(b.client.frames.length-before>5);assert.ok(!b.api.hasPendingDeck);
+  assert.ok(!JSON.stringify(c.frames.at(-1)).includes('Spell 99'));assert.equal(host.table.players.find(p=>p.id===b.p.id).counts.library,100);
+ });
+ await test('unacknowledged deck import times out, stays saved, blocks duplicates, and replays once',async()=>{
+  b.server.drop=m=>m.type==='snapshot';const deck=structuredClone(b.p);deck.deckName='Pending import';mock.timers.enable({apis:['setTimeout']});
+  const pending=b.api.submit({kind:'deck',player:deck}).catch(e=>e);await flush();const revision=readHost(hostStore).room.revision;assert.equal(b.api.hasPendingDeck,true);
+  mock.timers.tick(COMMAND_ACK_TIMEOUT_MS);const error=await pending;assert.match(error.message,/host has not confirmed/);assert.equal(b.api.waiters.size,0);mock.timers.reset();
+  await assert.rejects(b.api.submit({kind:'deck',player:deck}),/already saved/);assert.equal(readHost(hostStore).room.revision,revision);
+  b.server.drop=()=>false;b.api.requestSync();await flush();assert.equal(b.p.deckName,deck.deckName);assert.equal(b.api.hasPendingDeck,false);assert.equal(readHost(hostStore).room.revision,revision);
+ });
+ await test('disconnect rejects the import wait promptly and reconnect applies the saved command',async()=>{
+  b.client.drop=m=>m.type==='command';const deck=structuredClone(b.p);deck.deckName='Interrupted import';const pending=b.api.submit({kind:'deck',player:deck}).catch(e=>e);await flush();b.server.close();assert.match((await pending).message,/Host disconnected/);assert.equal(b.api.waiters.size,0);
+  const {store,token}=b;b.api.close();b=await guest('Bob',store,token,b.p,true);await flush();assert.equal(b.p.deckName,deck.deckName);assert.equal(b.p.zones.library.length,100);
+ });
+ await test('transport errors reject waits without deleting saved actions',async()=>{
+  b.client.drop=m=>m.type==='command';const pending=b.api.submit({kind:'deck',player:b.p}).catch(e=>e);b.client.emit('error',new Error('send failed'));assert.match((await pending).message,/Could not send/);assert.equal(b.api.hasPendingDeck,true);b.client.drop=()=>false;b.api.requestSync();await flush();assert.equal(b.api.hasPendingDeck,false);
+ });
+ await test('guest journal storage failure prevents a command being sent',async()=>{b.store.fail=true;const before=b.p.life;await assert.rejects(b.api.submit({kind:'action',action:{type:'life',amount:-1}}),/Could not save/);await flush();assert.equal(b.p.life,before);b.store.fail=false;});
+ for(const x of [b,c,d])x.api.close();host.close();console.log(`${count} authoritative network/reconnect checks passed.`);
+}finally{await rm(dir,{recursive:true,force:true});}

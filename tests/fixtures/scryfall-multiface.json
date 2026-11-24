@@ -1,0 +1,181 @@
+[
+  {
+    "id": "0a08e0d2-1e60-47f5-9228-4c11a127089d",
+    "name": "Bloodsoaked Insight // Sanguine Morass",
+    "layout": "modal_dfc",
+    "type_line": "Sorcery // Land",
+    "keywords": [],
+    "card_faces": [
+      {
+        "name": "Bloodsoaked Insight",
+        "mana_cost": "{5}{B/R}{B/R}",
+        "type_line": "Sorcery",
+        "oracle_text": "This spell costs {1} less to cast for each 1 life your opponents have lost this turn.\nTarget opponent exiles the top three cards of their library. Until the end of your next turn, you may play those cards. If you cast a spell this way, mana of any type can be spent to cast it.",
+        "image_uris": {
+          "normal": "https://cards.scryfall.io/normal/front/0/a/0a08e0d2-1e60-47f5-9228-4c11a127089d.jpg?1783911225"
+        }
+      },
+      {
+        "name": "Sanguine Morass",
+        "mana_cost": "",
+        "type_line": "Land",
+        "oracle_text": "This land enters tapped.\n{T}: Add {B} or {R}.",
+        "image_uris": {
+          "normal": "https://cards.scryfall.io/normal/back/0/a/0a08e0d2-1e60-47f5-9228-4c11a127089d.jpg?1783911225"
+        }
+      }
+    ],
+    "scryfall_uri": "https://scryfall.com/card/mh3/252/bloodsoaked-insight-sanguine-morass?utm_source=api"
+  },
+  {
+    "id": "a128e6d1-b90f-45a1-b587-f8c29bd0ec8c",
+    "name": "Charred Foyer // Warped Space",
+    "layout": "split",
+    "type_line": "Enchantment \u2014 Room // Enchantment \u2014 Room",
+    "mana_cost": "{3}{R} // {4}{R}{R}",
+    "keywords": [],
+    "image_uris": {
+      "normal": "https://cards.scryfall.io/normal/front/a/1/a128e6d1-b90f-45a1-b587-f8c29bd0ec8c.jpg?1783909470"
+    },
+    "card_faces": [
+      {
+        "name": "Charred Foyer",
+        "mana_cost": "{3}{R}",
+        "type_line": "Enchantment \u2014 Room",
+        "oracle_text": "At the beginning of your upkeep, exile the top card of your library. You may play it this turn.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)"
+      },
+      {
+        "name": "Warped Space",
+        "mana_cost": "{4}{R}{R}",
+        "type_line": "Enchantment \u2014 Room",
+        "oracle_text": "Once each turn, you may pay {0} rather than pay the mana cost for a spell you cast from exile.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)"
+      }
+    ],
+    "scryfall_uri": "https://scryfall.com/card/dsk/129/charred-foyer-warped-space?utm_source=api"
+  },
+  {
+    "id": "315cbbf7-a2ad-4565-9877-1e903d7fd797",
+    "name": "Decadent Dragon // Expensive Taste",
+    "layout": "adventure",
+    "type_line": "Creature \u2014 Dragon // Instant \u2014 Adventure",
+    "mana_cost": "{2}{R}{R} // {2}{B}",
+    "power": "4",
+    "toughness": "4",
+    "keywords": [
+      "Flying",
+      "Treasure",
+      "Trample"
+    ],
+    "image_uris": {
+      "normal": "https://cards.scryfall.io/normal/front/3/1/315cbbf7-a2ad-4565-9877-1e903d7fd797.jpg?1783915066"
+    },
+    "card_faces": [
+      {
+        "name": "Decadent Dragon",
+        "mana_cost": "{2}{R}{R}",
+        "type_line": "Creature \u2014 Dragon",
+        "oracle_text": "Flying, trample\nWhenever this creature attacks, create a Treasure token.",
+        "power": "4",
+        "toughness": "4"
+      },
+      {
+        "name": "Expensive Taste",
+        "mana_cost": "{2}{B}",
+        "type_line": "Instant \u2014 Adventure",
+        "oracle_text": "Exile the top two cards of target opponent's library face down. You may look at and play those cards for as long as they remain exiled."
+      }
+    ],
+    "scryfall_uri": "https://scryfall.com/card/woe/223/decadent-dragon-expensive-taste?utm_source=api"
+  },
+  {
+    "id": "7676abd9-0a3d-4721-b17b-778d2e3c2e25",
+    "name": "Legion Leadership // Legion Stronghold",
+    "layout": "modal_dfc",
+    "type_line": "Instant // Land",
+    "keywords": [
+      "Double"
+    ],
+    "card_faces": [
+      {
+        "name": "Legion Leadership",
+        "mana_cost": "{1}{R/W}",
+        "type_line": "Instant",
+        "oracle_text": "Until end of turn, double target creature's power and it gains first strike.",
+        "image_uris": {
+          "normal": "https://cards.scryfall.io/normal/front/7/6/7676abd9-0a3d-4721-b17b-778d2e3c2e25.jpg?1783911225"
+        }
+      },
+      {
+        "name": "Legion Stronghold",
+        "mana_cost": "",
+        "type_line": "Land",
+        "oracle_text": "This land enters tapped.\n{T}: Add {R} or {W}.",
+        "image_uris": {
+          "normal": "https://cards.scryfall.io/normal/back/7/6/7676abd9-0a3d-4721-b17b-778d2e3c2e25.jpg?1783911225"
+        }
+      }
+    ],
+    "scryfall_uri": "https://scryfall.com/card/mh3/255/legion-leadership-legion-stronghold?utm_source=api"
+  },
+  {
+    "id": "50686ac7-346c-43d1-bdaa-28d46a12ad93",
+    "name": "Sundering Eruption // Volcanic Fissure",
+    "layout": "modal_dfc",
+    "type_line": "Sorcery // Land",
+    "keywords": [],
+    "card_faces": [
+      {
+        "name": "Sundering Eruption",
+        "mana_cost": "{2}{R}",
+        "type_line": "Sorcery",
+        "oracle_text": "Destroy target land. Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle. Creatures without flying can't block this turn.",
+        "image_uris": {
+          "normal": "https://cards.scryfall.io/normal/front/5/0/50686ac7-346c-43d1-bdaa-28d46a12ad93.jpg?1783911228"
+        }
+      },
+      {
+        "name": "Volcanic Fissure",
+        "mana_cost": "",
+        "type_line": "Land",
+        "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {R}.",
+        "image_uris": {
+          "normal": "https://cards.scryfall.io/normal/back/5/0/50686ac7-346c-43d1-bdaa-28d46a12ad93.jpg?1783911228"
+        }
+      }
+    ],
+    "scryfall_uri": "https://scryfall.com/card/mh3/248/sundering-eruption-volcanic-fissure?utm_source=api"
+  },
+  {
+    "id": "95f2f5af-d405-4534-8683-5a9001f997b4",
+    "name": "The Legend of Roku // Avatar Roku",
+    "layout": "transform",
+    "type_line": "Enchantment \u2014 Saga // Legendary Creature \u2014 Avatar",
+    "keywords": [
+      "Transform",
+      "Firebending"
+    ],
+    "card_faces": [
+      {
+        "name": "The Legend of Roku",
+        "mana_cost": "{2}{R}{R}",
+        "type_line": "Enchantment \u2014 Saga",
+        "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI \u2014 Exile the top three cards of your library. Until the end of your next turn, you may play those cards.\nII \u2014 Add one mana of any color.\nIII \u2014 Exile this Saga, then return it to the battlefield transformed under your control.",
+        "image_uris": {
+          "normal": "https://cards.scryfall.io/normal/front/9/5/95f2f5af-d405-4534-8683-5a9001f997b4.jpg?1783904959"
+        }
+      },
+      {
+        "name": "Avatar Roku",
+        "mana_cost": "",
+        "type_line": "Legendary Creature \u2014 Avatar",
+        "oracle_text": "Firebending 4 (Whenever this creature attacks, add {R}{R}{R}{R}. This mana lasts until end of combat.)\n{8}: Create a 4/4 red Dragon creature token with flying and firebending 4.",
+        "power": "4",
+        "toughness": "4",
+        "image_uris": {
+          "normal": "https://cards.scryfall.io/normal/back/9/5/95f2f5af-d405-4534-8683-5a9001f997b4.jpg?1783904959"
+        }
+      }
+    ],
+    "scryfall_uri": "https://scryfall.com/card/tla/145/the-legend-of-roku-avatar-roku?utm_source=api"
+  }
+]

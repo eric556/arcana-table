@@ -1,0 +1,338 @@
+{
+  "{T}": {
+    "image": "/card-symbols/T.svg",
+    "english": "tap this permanent"
+  },
+  "{Q}": {
+    "image": "/card-symbols/Q.svg",
+    "english": "untap this permanent"
+  },
+  "{E}": {
+    "image": "/card-symbols/E.svg",
+    "english": "an energy counter"
+  },
+  "{P}": {
+    "image": "/card-symbols/P.svg",
+    "english": "modal budget pawprint"
+  },
+  "{PW}": {
+    "image": "/card-symbols/PW.svg",
+    "english": "planeswalker"
+  },
+  "{CHAOS}": {
+    "image": "/card-symbols/CHAOS.svg",
+    "english": "chaos"
+  },
+  "{A}": {
+    "image": "/card-symbols/A.svg",
+    "english": "an acorn counter"
+  },
+  "{TK}": {
+    "image": "/card-symbols/TK.svg",
+    "english": "a ticket counter"
+  },
+  "{X}": {
+    "image": "/card-symbols/X.svg",
+    "english": "X generic mana"
+  },
+  "{Y}": {
+    "image": "/card-symbols/Y.svg",
+    "english": "Y generic mana"
+  },
+  "{Z}": {
+    "image": "/card-symbols/Z.svg",
+    "english": "Z generic mana"
+  },
+  "{0}": {
+    "image": "/card-symbols/0.svg",
+    "english": "zero mana"
+  },
+  "{½}": {
+    "image": "/card-symbols/HALF.svg",
+    "english": "one-half generic mana"
+  },
+  "{1}": {
+    "image": "/card-symbols/1.svg",
+    "english": "one generic mana"
+  },
+  "{2}": {
+    "image": "/card-symbols/2.svg",
+    "english": "two generic mana"
+  },
+  "{3}": {
+    "image": "/card-symbols/3.svg",
+    "english": "three generic mana"
+  },
+  "{4}": {
+    "image": "/card-symbols/4.svg",
+    "english": "four generic mana"
+  },
+  "{5}": {
+    "image": "/card-symbols/5.svg",
+    "english": "five generic mana"
+  },
+  "{6}": {
+    "image": "/card-symbols/6.svg",
+    "english": "six generic mana"
+  },
+  "{7}": {
+    "image": "/card-symbols/7.svg",
+    "english": "seven generic mana"
+  },
+  "{8}": {
+    "image": "/card-symbols/8.svg",
+    "english": "eight generic mana"
+  },
+  "{9}": {
+    "image": "/card-symbols/9.svg",
+    "english": "nine generic mana"
+  },
+  "{10}": {
+    "image": "/card-symbols/10.svg",
+    "english": "ten generic mana"
+  },
+  "{11}": {
+    "image": "/card-symbols/11.svg",
+    "english": "eleven generic mana"
+  },
+  "{12}": {
+    "image": "/card-symbols/12.svg",
+    "english": "twelve generic mana"
+  },
+  "{13}": {
+    "image": "/card-symbols/13.svg",
+    "english": "thirteen generic mana"
+  },
+  "{14}": {
+    "image": "/card-symbols/14.svg",
+    "english": "fourteen generic mana"
+  },
+  "{15}": {
+    "image": "/card-symbols/15.svg",
+    "english": "fifteen generic mana"
+  },
+  "{16}": {
+    "image": "/card-symbols/16.svg",
+    "english": "sixteen generic mana"
+  },
+  "{17}": {
+    "image": "/card-symbols/17.svg",
+    "english": "seventeen generic mana"
+  },
+  "{18}": {
+    "image": "/card-symbols/18.svg",
+    "english": "eighteen generic mana"
+  },
+  "{19}": {
+    "image": "/card-symbols/19.svg",
+    "english": "nineteen generic mana"
+  },
+  "{20}": {
+    "image": "/card-symbols/20.svg",
+    "english": "twenty generic mana"
+  },
+  "{100}": {
+    "image": "/card-symbols/100.svg",
+    "english": "one hundred generic mana"
+  },
+  "{1000000}": {
+    "image": "/card-symbols/1000000.svg",
+    "english": "one million generic mana"
+  },
+  "{∞}": {
+    "image": "/card-symbols/INFINITY.svg",
+    "english": "infinite generic mana"
+  },
+  "{W/U}": {
+    "image": "/card-symbols/WU.svg",
+    "english": "one white or blue mana"
+  },
+  "{W/B}": {
+    "image": "/card-symbols/WB.svg",
+    "english": "one white or black mana"
+  },
+  "{B/R}": {
+    "image": "/card-symbols/BR.svg",
+    "english": "one black or red mana"
+  },
+  "{B/G}": {
+    "image": "/card-symbols/BG.svg",
+    "english": "one black or green mana"
+  },
+  "{U/B}": {
+    "image": "/card-symbols/UB.svg",
+    "english": "one blue or black mana"
+  },
+  "{U/R}": {
+    "image": "/card-symbols/UR.svg",
+    "english": "one blue or red mana"
+  },
+  "{R/G}": {
+    "image": "/card-symbols/RG.svg",
+    "english": "one red or green mana"
+  },
+  "{R/W}": {
+    "image": "/card-symbols/RW.svg",
+    "english": "one red or white mana"
+  },
+  "{G/W}": {
+    "image": "/card-symbols/GW.svg",
+    "english": "one green or white mana"
+  },
+  "{G/U}": {
+    "image": "/card-symbols/GU.svg",
+    "english": "one green or blue mana"
+  },
+  "{B/G/P}": {
+    "image": "/card-symbols/BGP.svg",
+    "english": "one black mana, one green mana, or 2 life"
+  },
+  "{B/R/P}": {
+    "image": "/card-symbols/BRP.svg",
+    "english": "one black mana, one red mana, or 2 life"
+  },
+  "{G/U/P}": {
+    "image": "/card-symbols/GUP.svg",
+    "english": "one green mana, one blue mana, or 2 life"
+  },
+  "{G/W/P}": {
+    "image": "/card-symbols/GWP.svg",
+    "english": "one green mana, one white mana, or 2 life"
+  },
+  "{R/G/P}": {
+    "image": "/card-symbols/RGP.svg",
+    "english": "one red mana, one green mana, or 2 life"
+  },
+  "{R/W/P}": {
+    "image": "/card-symbols/RWP.svg",
+    "english": "one red mana, one white mana, or 2 life"
+  },
+  "{U/B/P}": {
+    "image": "/card-symbols/UBP.svg",
+    "english": "one blue mana, one black mana, or 2 life"
+  },
+  "{U/R/P}": {
+    "image": "/card-symbols/URP.svg",
+    "english": "one blue mana, one red mana, or 2 life"
+  },
+  "{W/B/P}": {
+    "image": "/card-symbols/WBP.svg",
+    "english": "one white mana, one black mana, or 2 life"
+  },
+  "{W/U/P}": {
+    "image": "/card-symbols/WUP.svg",
+    "english": "one white mana, one blue mana, or 2 life"
+  },
+  "{C/W}": {
+    "image": "/card-symbols/CW.svg",
+    "english": "one colorless mana or one white mana"
+  },
+  "{C/U}": {
+    "image": "/card-symbols/CU.svg",
+    "english": "one colorless mana or one blue mana"
+  },
+  "{C/B}": {
+    "image": "/card-symbols/CB.svg",
+    "english": "one colorless mana or one black mana"
+  },
+  "{C/R}": {
+    "image": "/card-symbols/CR.svg",
+    "english": "one colorless mana or one red mana"
+  },
+  "{C/G}": {
+    "image": "/card-symbols/CG.svg",
+    "english": "one colorless mana or one green mana"
+  },
+  "{2/W}": {
+    "image": "/card-symbols/2W.svg",
+    "english": "two generic mana or one white mana"
+  },
+  "{2/U}": {
+    "image": "/card-symbols/2U.svg",
+    "english": "two generic mana or one blue mana"
+  },
+  "{2/B}": {
+    "image": "/card-symbols/2B.svg",
+    "english": "two generic mana or one black mana"
+  },
+  "{2/R}": {
+    "image": "/card-symbols/2R.svg",
+    "english": "two generic mana or one red mana"
+  },
+  "{2/G}": {
+    "image": "/card-symbols/2G.svg",
+    "english": "two generic mana or one green mana"
+  },
+  "{H}": {
+    "image": "/card-symbols/H.svg",
+    "english": "one colored mana or two life"
+  },
+  "{W/P}": {
+    "image": "/card-symbols/WP.svg",
+    "english": "one white mana or two life"
+  },
+  "{U/P}": {
+    "image": "/card-symbols/UP.svg",
+    "english": "one blue mana or two life"
+  },
+  "{B/P}": {
+    "image": "/card-symbols/BP.svg",
+    "english": "one black mana or two life"
+  },
+  "{R/P}": {
+    "image": "/card-symbols/RP.svg",
+    "english": "one red mana or two life"
+  },
+  "{G/P}": {
+    "image": "/card-symbols/GP.svg",
+    "english": "one green mana or two life"
+  },
+  "{C/P}": {
+    "image": "/card-symbols/CP.svg",
+    "english": "one colorless mana or two life"
+  },
+  "{HW}": {
+    "image": "/card-symbols/HW.svg",
+    "english": "one-half white mana"
+  },
+  "{HR}": {
+    "image": "/card-symbols/HR.svg",
+    "english": "one-half red mana"
+  },
+  "{W}": {
+    "image": "/card-symbols/W.svg",
+    "english": "one white mana"
+  },
+  "{U}": {
+    "image": "/card-symbols/U.svg",
+    "english": "one blue mana"
+  },
+  "{B}": {
+    "image": "/card-symbols/B.svg",
+    "english": "one black mana"
+  },
+  "{R}": {
+    "image": "/card-symbols/R.svg",
+    "english": "one red mana"
+  },
+  "{G}": {
+    "image": "/card-symbols/G.svg",
+    "english": "one green mana"
+  },
+  "{C}": {
+    "image": "/card-symbols/C.svg",
+    "english": "one colorless mana"
+  },
+  "{S}": {
+    "image": "/card-symbols/S.svg",
+    "english": "one snow mana"
+  },
+  "{L}": {
+    "image": "/card-symbols/L.svg",
+    "english": "one mana from a legendary source"
+  },
+  "{D}": {
+    "image": "/card-symbols/D.svg",
+    "english": "one potential land drop"
+  }
+}
