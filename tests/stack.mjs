@@ -7,9 +7,9 @@ import {EventEmitter} from 'node:events';
 import ts from 'typescript';
 const dir=await mkdtemp(join(tmpdir(),'arcana-stack-'));
 try{
- for(const name of ['game','stack' ,'shared-cards','private-cards']){
+ for(const name of ['game','stack' ,'shared-cards']){
   const source=await readFile(new URL(`../lib/${name}.ts`,import.meta.url),'utf8');
-  const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replaceAll("from './shared-cards'","from './shared-cards.mjs'").replaceAll("from './private-cards'","from './private-cards.mjs'").replaceAll("from './game'","from './game.mjs'").replaceAll("from './stack'","from './stack.mjs'");
+  const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replaceAll("from './shared-cards'","from './shared-cards.mjs'").replaceAll("from './game'","from './game.mjs'").replaceAll("from './stack'","from './stack.mjs'");
   await writeFile(join(dir,`${name}.mjs`),js);
  }
  const g=await import(pathToFileURL(join(dir,'game.mjs'))),s=await import(pathToFileURL(join(dir,'stack.mjs')));

@@ -7,9 +7,9 @@ import {EventEmitter} from 'node:events';
 import ts from 'typescript';
 const dir=await mkdtemp(join(tmpdir(),'arcana-targets-'));
 try{
- for(const name of ['game','abilities','stack','table-gestures','cards','deck-parser' ,'shared-cards','private-cards']){
+ for(const name of ['game','abilities','stack','table-gestures','cards','deck-parser' ,'shared-cards']){
   let js=ts.transpileModule(await readFile(new URL(`../lib/${name}.ts`,import.meta.url),'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
-  for(const dep of ['game','abilities','stack','table-gestures','deck-parser' ,'shared-cards','private-cards'])js=js.replaceAll(`'./${dep}'`,`'./${dep}.mjs'`);
+  for(const dep of ['game','abilities','stack','table-gestures','deck-parser' ,'shared-cards'])js=js.replaceAll(`'./${dep}'`,`'./${dep}.mjs'`);
   await writeFile(join(dir,`${name}.mjs`),js);
  }
  const g=await import(pathToFileURL(join(dir,'game.mjs'))),s=await import(pathToFileURL(join(dir,'stack.mjs'))),a=await import(pathToFileURL(join(dir,'abilities.mjs'))),{tableGesture}=await import(pathToFileURL(join(dir,'table-gestures.mjs'))),{normalizeCard}=await import(pathToFileURL(join(dir,'cards.mjs')));

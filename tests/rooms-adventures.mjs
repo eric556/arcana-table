@@ -7,9 +7,10 @@ import {renderToStaticMarkup} from 'react-dom/server';
 import ts from 'typescript';
 await mkdir('node_modules/.cache',{recursive:true});const dir=await mkdtemp(join(process.cwd(),'node_modules/.cache/arcana-rooms-'));
 try{
- for(const [folder,name] of [['lib','game'],['lib','shared-cards'],['lib','abilities'],['lib','stack'],['lib','cards'],['lib','deck-parser'],['components','card-faces']]){
+ for(const [folder,name] of [['lib','game'],['lib','shared-cards'],['lib','abilities'],['lib','stack'],['lib','cards'],['lib','deck-parser'],['components','card-faces'],['components','rules-text']]){
   let js=ts.transpileModule(await readFile(new URL(`../${folder}/${name}.${folder==='components'?'tsx':'ts'}`,import.meta.url),'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX}}).outputText;
-  for(const dep of ['game','abilities','stack','deck-parser','card-art' ,'shared-cards','private-cards'])js=js.replaceAll(`'./${dep}'`,`'./${dep}.mjs'`).replaceAll(`'@/lib/${dep}'`,`'./${dep}.mjs'`);
+  for(const dep of ['game','abilities','stack','deck-parser','card-art','rules-text','shared-cards'])js=js.replaceAll(`'./${dep}'`,`'./${dep}.mjs'`).replaceAll(`'@/lib/${dep}'`,`'./${dep}.mjs'`);
+  js=js.replace("import symbols from '@/lib/card-symbols.json';","const symbols="+await readFile(new URL('../lib/card-symbols.json',import.meta.url),'utf8')+";");
   await writeFile(join(dir,`${name}.mjs`),js);
  }
  await writeFile(join(dir,'card-art.mjs'),"import React from 'react';export const CardArt=({card,reveal})=>React.createElement('div',{'data-testid':'art'},card.faceDown&&!reveal?'Card back':card.data.name);");

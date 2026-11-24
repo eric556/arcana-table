@@ -47,3 +47,6 @@ next-env.d.ts
 
 # Card artwork is downloaded and cached at runtime, never committed.
 /public/cards/
+
+# Generated TypeScript incremental-build cache.
+*.tsbuildinfo
